@@ -8,7 +8,7 @@ Before starting, ensure you have:
 
 - [ ] Node.js 18+ installed (`node --version`)
 - [ ] PostgreSQL database server running
-- [ ] AWS account with S3 bucket created
+- [ ] Backblaze B2 account with bucket created
 - [ ] Telegram Bot Token from [@BotFather](https://t.me/botfather)
 
 ## Step-by-Step Setup
@@ -41,11 +41,12 @@ TELEGRAM_BOT_TOKEN="123456789:ABCdefGHIjklMNOpqrsTUVwxyz"
 # Required JWT Secret (generate a random 32+ character string)
 JWT_SECRET="your_random_secret_at_least_32_characters_long"
 
-# Required AWS S3 Configuration
-AWS_ACCESS_KEY_ID="AKIA..."
-AWS_SECRET_ACCESS_KEY="..."
-AWS_S3_BUCKET_NAME="oraville-avatars"
-AWS_REGION="us-east-1"
+# Required Backblaze B2 Configuration
+# Get credentials from: https://secure.backblaze.com/app_keys.htm
+B2_APPLICATION_KEY_ID="00xxxxxxxxxxxxxxx0000000001"
+B2_APPLICATION_KEY="K00xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+B2_BUCKET_NAME="oraville-avatars"
+B2_REGION="us-west-004"
 
 # Optional Configurations
 PORT=3000
@@ -144,9 +145,11 @@ npm run prisma:migrate
 - Run `npm run prisma:generate` after any schema changes
 - Delete `node_modules/.prisma` and regenerate if corrupted
 
-### AWS S3 Issues
-- Verify IAM user has `s3:PutObject` and `s3:GetObject` permissions
+### Backblaze B2 Issues
+- Verify application key has read/write permissions
 - Ensure bucket exists and region is correct
+- Get credentials from: https://secure.backblaze.com/app_keys.htm
+- Common regions: us-west-004, us-east-005, eu-central-003
 - For testing, you can skip avatar uploads initially
 
 ## Next Steps

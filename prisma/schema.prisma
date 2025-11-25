@@ -15,7 +15,7 @@ model User {
   firstName    String
   lastName     String?
   username     String?
-  avatarUrl    String?  // URL from S3/Cloudinary
+  avatarUrl    String?  // URL from Backblaze B2/Cloudinary
   country      String?
 
   referralCode String   @unique @default(cuid())

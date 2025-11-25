@@ -3,7 +3,7 @@ import { prisma } from '../config/database';
 import { getUserTotalPoints } from '../services/transactionService';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { s3Client, S3_BUCKET } from '../config/s3';
+import { storageClient, STORAGE_BUCKET } from '../config/storage';
 
 /**
  * GET /api/user/profile
@@ -102,12 +102,12 @@ export async function getAvatarUploadUrl(req: Request, res: Response): Promise<v
     const key = `avatars/${userId}/${timestamp}.${extension}`;
     
     const command = new PutObjectCommand({
-      Bucket: S3_BUCKET,
+      Bucket: STORAGE_BUCKET,
       Key: key,
       ContentType: contentType,
     });
     
-    const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+    const uploadUrl = await getSignedUrl(storageClient, command, { expiresIn: 3600 });
     
     res.status(200).json({
       uploadUrl,
@@ -134,7 +134,7 @@ export async function confirmAvatar(req: Request, res: Response): Promise<void> 
     }
     
     // Construct public URL
-    const avatarUrl = `https://${S3_BUCKET}.s3.${process.env.AWS_REGION || 'us-east-1'}.amazonaws.com/${key}`;
+    const avatarUrl = `https://${STORAGE_BUCKET}.s3.${process.env.B2_REGION || 'us-west-004'}.backblazeb2.com/${key}`;
     
     await prisma.user.update({
       where: { id: userId },

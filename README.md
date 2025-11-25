@@ -29,7 +29,7 @@ Oraville AI is a Telegram Mini App backend that encourages users to build positi
 - ✅ JWT-based session management
 - ✅ PostgreSQL database with Prisma ORM
 - ✅ Atomic transaction system for points (audit trail)
-- ✅ AWS S3 integration for avatar uploads with pre-signed URLs
+- ✅ Backblaze B2 integration for avatar uploads with pre-signed URLs
 - ✅ Automated daily task creation via cron jobs
 - ✅ Real-time leaderboards (weekly referrals & total points)
 - ✅ Referral bonus system
@@ -42,7 +42,7 @@ Oraville AI is a Telegram Mini App backend that encourages users to build positi
 - **Database**: PostgreSQL
 - **ORM**: Prisma
 - **Authentication**: JWT + Telegram initData validation
-- **Storage**: AWS S3
+- **Storage**: Backblaze B2
 - **Scheduler**: node-cron
 
 ## 🚀 Getting Started
@@ -51,7 +51,7 @@ Oraville AI is a Telegram Mini App backend that encourages users to build positi
 
 - Node.js >= 18.0.0
 - PostgreSQL database
-- AWS S3 bucket (for avatar uploads)
+- Backblaze B2 bucket (for avatar uploads)
 - Telegram Bot Token
 
 ### Installation
@@ -75,10 +75,10 @@ Edit `.env` with your actual values:
 DATABASE_URL="postgresql://user:password@localhost:5432/oraville?schema=public"
 TELEGRAM_BOT_TOKEN="your_bot_token_from_botfather"
 JWT_SECRET="your_very_strong_random_secret_string"
-AWS_ACCESS_KEY_ID="your_aws_access_key"
-AWS_SECRET_ACCESS_KEY="your_aws_secret_key"
-AWS_S3_BUCKET_NAME="oraville-avatars"
-AWS_REGION="us-east-1"
+B2_APPLICATION_KEY_ID="your_b2_application_key_id"
+B2_APPLICATION_KEY="your_b2_application_key"
+B2_BUCKET_NAME="oraville-avatars"
+B2_REGION="us-west-004"
 ```
 
 3. **Set up the database:**
@@ -155,7 +155,7 @@ Update user profile.
 ```
 
 #### `GET /api/user/avatar/upload-url?contentType=image/jpeg`
-Get pre-signed S3 URL for avatar upload.
+Get pre-signed B2 URL for avatar upload.
 
 #### `POST /api/user/avatar/confirm`
 Confirm successful avatar upload.
@@ -250,10 +250,10 @@ See [prisma/schema.prisma](prisma/schema.prisma) for full schema.
 | `DATABASE_URL` | PostgreSQL connection string | Yes |
 | `TELEGRAM_BOT_TOKEN` | Bot token from @BotFather | Yes |
 | `JWT_SECRET` | Secret for signing JWTs | Yes |
-| `AWS_ACCESS_KEY_ID` | AWS credentials | Yes |
-| `AWS_SECRET_ACCESS_KEY` | AWS credentials | Yes |
-| `AWS_S3_BUCKET_NAME` | S3 bucket for avatars | Yes |
-| `AWS_REGION` | AWS region | Yes |
+| `B2_APPLICATION_KEY_ID` | Backblaze B2 application key ID | Yes |
+| `B2_APPLICATION_KEY` | Backblaze B2 application key | Yes |
+| `B2_BUCKET_NAME` | B2 bucket for avatars | Yes |
+| `B2_REGION` | B2 region | Yes |
 | `PORT` | Server port (default: 3000) | No |
 | `REFERRAL_SIGNUP_BONUS` | Points for new user (default: 25) | No |
 | `REFERRAL_REFERRER_BONUS` | Points for referrer (default: 50) | No |
@@ -322,7 +322,7 @@ A daily cron job runs at 00:00 UTC to create `UserTask` entries for all users. T
 ### Security
 - Telegram initData is validated using HMAC-SHA256
 - JWTs expire after 30 days
-- AWS S3 pre-signed URLs expire after 1 hour
+- Backblaze B2 pre-signed URLs expire after 1 hour
 - Passwords are never stored (Telegram handles auth)
 
 ## 📄 License
