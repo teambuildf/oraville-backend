@@ -1,0 +1,77 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  telegramId   BigInt   @unique
+  firstName    String
+  lastName     String?
+  username     String?
+  avatarUrl    String?  // URL from S3/Cloudinary
+  country      String?
+
+  referralCode String   @unique @default(cuid())
+
+  // Tracks who referred this user
+  referredBy   User?    @relation("Referrals", fields: [referredById], references: [id], onDelete: SetNull)
+  referredById String?
+
+  // Tracks users this user has referred
+  referrals    User[]   @relation("Referrals")
+
+  tasks        UserTask[]
+  transactions Transaction[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  points      Int
+  type        String     // e.g., "DAILY", "WEEKLY"
+  action      String     @unique // e.g., "MORNING_CHECKIN", "FACE_SCAN"
+  isActive    Boolean    @default(true)
+  userTasks   UserTask[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model UserTask {
+  id          String    @id @default(cuid())
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId      String
+  date        DateTime  @db.Date
+  status      String    @default("PENDING") // "PENDING", "COMPLETED"
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, taskId, date]) // A user can only have one instance of a task per day
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  points      Int      // e.g., +10 for positive, negative for future redemptions
+  type        String   // "TASK_COMPLETION", "REFERRAL_BONUS", "REFERRAL_SIGNUP"
+  description String
+  metadata    Json?    // { "taskId": "...", "referredUserId": "..." }
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
