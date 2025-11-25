@@ -260,13 +260,6 @@ See [prisma/schema.prisma](prisma/schema.prisma) for full schema.
 
 ## 🚢 Deployment
 
-### Heroku
-
-1. Create a new Heroku app
-2. Add PostgreSQL addon: `heroku addons:create heroku-postgresql:mini`
-3. Set environment variables: `heroku config:set TELEGRAM_BOT_TOKEN=...`
-4. Deploy: `git push heroku main`
-
 ### Vercel
 
 1. Install Vercel CLI: `npm i -g vercel`
@@ -332,4 +325,3 @@ MIT
 ---
 
 **Built with ❤️ for Oraville AI**
-# oraville-backend
